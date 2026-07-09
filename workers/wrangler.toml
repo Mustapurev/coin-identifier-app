@@ -1,0 +1,8 @@
+name = "coin-identifier-api"
+main = "ad-auction.ts"
+compatibility_date = "2026-07-09"
+workers_dev = true
+
+kv_namespaces = [
+  { binding = "AD_CACHE", id = "61e92c4d991a466fa3956cb6404d3f75" }
+]
