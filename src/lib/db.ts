@@ -1,1 +1,60 @@
-import Dexie,{type Table}from'dexie';import type{ScanRecord,Collection,UserProfile}from'../types';export class CoinIdentifierDB extends Dexie{scans!:Table<ScanRecord,string>;collections!:Table<Collection,string>;profile!:Table<UserProfile,string>;constructor(){super('CoinIdentifierDB');this.version(1).stores({scans:'id,timestamp,coinId',collections:'id,name,userId,createdAt',profile:'id,email'});}async getScanHistory(limit=20){return this.scans.orderBy('timestamp').reverse().limit(limit).toArray();}async getCollectionsByUser(userId:string){return this.collections.where('userId').equals(userId).toArray();}async addCoinToCollection(cid:string,coinId:string){const c=await this.collections.get(cid);if(c&&!c.coinIds.includes(coinId)){await this.collections.update(cid,{coinIds:[...c.coinIds,coinId],updatedAt:Date.now()});}}async removeCoinFromCollection(cid:string,coinId:string){const c=await this.collections.get(cid);if(c){await this.collections.update(cid,{coinIds:c.coinIds.filter(id=>id!==coinId),updatedAt:Date.now()});}}}export const db=new CoinIdentifierDB();
+import Dexie, { type Table } from 'dexie';
+import type { ScanRecord, Collection, UserProfile } from '../types';
+
+export class CoinIdentifierDB extends Dexie {
+  scans!: Table<ScanRecord, string>;
+  collections!: Table<Collection, string>;
+  profile!: Table<UserProfile, string>;
+
+  constructor() {
+    super('CoinIdentifierDB');
+
+    this.version(1).stores({
+      scans: 'id,timestamp,coinId',
+      collections: 'id,name,userId,createdAt',
+      profile: 'id,email',
+    });
+
+    this.version(2).stores({
+      scans: 'id,timestamp,coinId',
+      collections: 'id,name,userId,createdAt',
+      profile: 'id,email,googleId',
+    }).upgrade(async tx => {
+      await tx.table('profile').toCollection().count();
+    });
+
+    this.on('versionchange', () => {
+      this.close();
+    });
+  }
+
+  async getScanHistory(limit = 20) {
+    return this.scans.orderBy('timestamp').reverse().limit(limit).toArray();
+  }
+
+  async getCollectionsByUser(userId: string) {
+    return this.collections.where('userId').equals(userId).toArray();
+  }
+
+  async addCoinToCollection(cid: string, coinId: string) {
+    const c = await this.collections.get(cid);
+    if (c && !c.coinIds.includes(coinId)) {
+      await this.collections.update(cid, {
+        coinIds: [...c.coinIds, coinId],
+        updatedAt: Date.now(),
+      });
+    }
+  }
+
+  async removeCoinFromCollection(cid: string, coinId: string) {
+    const c = await this.collections.get(cid);
+    if (c) {
+      await this.collections.update(cid, {
+        coinIds: c.coinIds.filter(id => id !== coinId),
+        updatedAt: Date.now(),
+      });
+    }
+  }
+}
+
+export const db = new CoinIdentifierDB();

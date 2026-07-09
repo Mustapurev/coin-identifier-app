@@ -6,7 +6,14 @@ const GOOGLE_CLIENT_ID =
   '556523444045-gde4m24drg169sokee10bemhtofbgkvc.apps.googleusercontent.com';
 const PROFILE_KEY = 'coin-identifier-profile';
 
-export function decodeGoogleToken(t: string): any {
+type GoogleTokenData = {
+  sub: string;
+  email: string;
+  name: string;
+  picture: string;
+};
+
+export function decodeGoogleToken(t: string): GoogleTokenData | null {
   try {
     const b = t.split('.')[1];
     const j = decodeURIComponent(
