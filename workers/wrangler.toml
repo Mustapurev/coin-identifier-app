@@ -6,3 +6,6 @@ workers_dev = true
 kv_namespaces = [
   { binding = "AD_CACHE", id = "61e92c4d991a466fa3956cb6404d3f75" }
 ]
+
+SUPABASE_URL = "https://qulwwwikeknvgccxhskb.supabase.co"    # ← Paste your Project URL
+SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1bHd3d2lrZWtudmdjY3hoc2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MTA0MjYsImV4cCI6MjA5OTE4NjQyNn0.T3REjlyR6U1Ei8tH71tBnb0oYaXXTT1ci9pahYW8LMw"                   # ← Paste your anon key
