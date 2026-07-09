@@ -56,7 +56,8 @@ export function CameraScanner() {
   return (
     <div className="relative min-h-[60vh]">
       <div className="relative w-full max-w-md mx-auto rounded-2xl overflow-hidden bg-black">
-        <video ref={videoRef} autoPlay playsInline muted className="w-full aspect-[3/4] object-cover"/>
+        <video ref={videoRef as React.Ref<HTMLVideoElement>}
+ autoPlay playsInline muted className="w-full aspect-[3/4] object-cover"/>
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-6 left-6 w-8 h-8 border-t-2 border-l-2 border-gold-400 rounded-tl-lg"/>
           <div className="absolute top-6 right-6 w-8 h-8 border-t-2 border-r-2 border-gold-400 rounded-tr-lg"/>
