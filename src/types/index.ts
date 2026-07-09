@@ -1,0 +1,7 @@
+export interface UserProfile { id: string; email: string; name: string; picture: string; googleId: string; createdAt: number; displayName: string; bio: string; preferredCurrency: string; }
+export interface AdState { interstitialVideosWatched: number; adFreeUntil: number | null; lastInterstitialShown: number; lastFullscreenShown: number; bannerEnabled: boolean; }
+export type AdType = 'banner' | 'interstitial' | 'fullscreen' | 'rewarded';
+export interface AdNetworkConfig { id: string; name: string; type: 'adsense'|'adx'|'prebid'|'facebook'|'aps'|'custom'; priority: number; weight: number; enabled: boolean; config: Record<string,string>; }
+export interface CoinRecord { id: string; name: string; country: string; year: number|null; denomination: string; currency: string; composition: string; diameter: number|null; weight: number|null; obverseDescription: string; reverseDescription: string; grade: string|null; rarity: 'Common'|'Uncommon'|'Rare'|'Very Rare'|'Extremely Rare'; imageUrl: string; thumbnailUrl: string; catalogNumbers: Record<string,string>; }
+export interface ScanRecord { id: string; coinId: string|null; imageBlob: Blob; imageHash: string; imageHashV: string; timestamp: number; matchedCoin: CoinRecord|null; confidence: number; notes: string; }
+export interface Collection { id: string; name: string; description: string; coverImageUrl: string; coinIds: string[]; createdAt: number; updatedAt: number; isPublic: boolean; userId: string; }

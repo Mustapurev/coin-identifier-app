@@ -1,0 +1,6 @@
+export function generateId():string{if(typeof crypto!=='undefined'&&crypto.randomUUID)return crypto.randomUUID();return Date.now()+'-'+Math.random().toString(36).slice(2,11);}
+export function formatRelativeDate(ts:number):string{const d=Date.now()-ts,m=Math.floor(d/60000),h=Math.floor(d/3600000),days=Math.floor(d/86400000);if(m<1)return'just now';if(m<60)return m+'m ago';if(h<24)return h+'h ago';if(days<7)return days+'d ago';return new Date(ts).toLocaleDateString();}
+export function formatDate(ts:number):string{return new Date(ts).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});}
+export function isPWA():boolean{return window.matchMedia('(display-mode: standalone)').matches||!!(window.navigator as any).standalone;}
+export function hasCamera():boolean{return!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia);}
+export function getDeviceType():'mobile'|'tablet'|'desktop'{const ua=navigator.userAgent;if(/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua))return'tablet';if(/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry/i.test(ua))return'mobile';return'desktop';}

@@ -1,0 +1,11 @@
+interface AuctionRequest{placementType:'banner'|'interstitial'|'fullscreen'|'rewarded';userId?:string;keywords?:string[];currentPage?:string;deviceType?:'mobile'|'tablet'|'desktop'}
+interface BidResult{networkId:string;networkName:string;bid:number;currency:string;latency:number;status:'won'|'lost'|'no_fill'|'timeout'|'error';adCode:string}
+export interface AuctionResponse{winner:BidResult;waterfall:BidResult[];auctionId:string;timestamp:number;totalLatency:number}
+const WORKER_BASE=(import.meta as any).env?.VITE_WORKER_URL||'https://coin-identifier-api.YOUR_SUBDOMAIN.workers.dev';
+class AdMediationClient{private cache=new Map<string,{result:AuctionResponse;expires:number}>();private ttl=30000;
+async requestAd(req:AuctionRequest):Promise<AuctionResponse>{const ck=req.placementType+'_'+(req.currentPage||'default');if(req.placementType==='banner'){const cached=this.cache.get(ck);if(cached&&cached.expires>Date.now())return cached.result;}
+try{const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),3000);const r=await fetch(WORKER_BASE+'/api/ad-auction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(req),signal:ctrl.signal});clearTimeout(t);if(!r.ok)throw new Error('HTTP '+r.status);const result:AuctionResponse=await r.json();if(req.placementType==='banner'){this.cache.set(ck,{result,expires:Date.now()+this.ttl});}return result;}catch{return this.fallback(req.placementType);}}
+async reportEvent(aid:string,nid:string,nn:string,evt:'impression'|'click'|'revenue'|'close',amt?:number,pt?:string):Promise<void>{try{await fetch(WORKER_BASE+'/api/ad-report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({auctionId:aid,networkId:nid,networkName:nn,event:evt,amount:amt,placementType:pt})});}catch{}}
+invalidateCache():void{this.cache.clear();}
+private fallback(pt:string):AuctionResponse{return{winner:{networkId:'adsense',networkName:'Google AdSense (fallback)',bid:0.5,currency:'USD',latency:0,status:'won',adCode:'<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXX" data-ad-slot="FALLBACK" data-ad-format="auto"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script>'},waterfall:[],auctionId:'fallback-'+Date.now(),timestamp:Date.now(),totalLatency:0};}}
+export const adMediation=new AdMediationClient();
